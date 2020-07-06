@@ -1,4 +1,6 @@
 import jwt from "jsonwebtoken"
+import Facebook from "./providers/Facebook"
+import Google from "./providers/Google"
 
 const JWT_OPTS = {
     expiresIn: process.env.JWT_OPTS_EXPIRE_IN,
@@ -41,4 +43,5 @@ export default {
     createToken,
     verifyToken,
     getTokenFromHeaders,
+    Provider: { Facebook, Google }
 }

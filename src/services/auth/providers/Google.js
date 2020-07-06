@@ -2,23 +2,25 @@ import axios from 'axios'
 
 const BASE_URL = 'https://www.googleapis.com/userinfo/v2/me'
 
-const authAsync = async (token) => {
+const authAsync = async (accessToken) => {
     try {
         const res = await axios.get(BASE_URL, {
             headers: {
-                Authorization: `Bearer ${token}`
+                Authorization: `Bearer ${accessToken}`
             }
         })
 
         if (res.status === 200) {
             const user = {
                 email: res.data.email,
+                name: res.data.name,
                 firstname: res.data.given_name,
                 lastname: res.data.family_name,
-                avatar: `https://pikmail.herokuapp.com/${res.data.email}?size=500`,
+                avatar: res.data.picture,
                 provider: {
                     uid: res.data.id,
-                    type: 'GOOGLE'
+                    type: 'GOOGLE',
+                    accessToken
                 }
             }
             return user
@@ -30,4 +32,4 @@ const authAsync = async (token) => {
     }
 }
 
-export default { authAsync }
+export default authAsync

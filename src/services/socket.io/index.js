@@ -12,11 +12,9 @@ const SocketConnection = (io) => {
             rooms.forEach(room => {
                 const sockets = io.getSocketInRoom(room)
                 delete sockets[socket.id]
-                const data = {
-                    type: 'ROOM.STATUS', payload: sockets
-                }
+                const data = { type: 'ROOM.STATUS', payload: sockets }
                 io.in(room).emit('data', { channel: room, data })
-            });
+            })
             console.log('User Disconnect', socket.id)
         })
 
@@ -56,6 +54,7 @@ const SocketConnection = (io) => {
     io.getSocketById = (user_id) => {
         return io.sockets.sockets[user_id]
     }
+
     io.getSocketInRoom = (roomName) => {
         if (!io.sockets.adapter.rooms[roomName]) return {}
         return io.sockets.adapter.rooms[roomName].sockets

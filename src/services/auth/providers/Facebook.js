@@ -1,22 +1,23 @@
 import axios from 'axios'
 
 const FIELDS = 'email,name,picture,first_name,last_name'
-
 const BASE_URL = `https://graph.facebook.com/me?fields=${FIELDS}`
 
-const authAsync = async (token) => {
+const authAsync = async (accessToken) => {
     try {
-        const res = await axios.get(`${BASE_URL}&access_token=${token}`)
+        const res = await axios.get(`${BASE_URL}&access_token=${accessToken}`)
 
         if (res.status === 200) {
             const user = {
                 email: res.data.email,
+                name: res.data.name,
                 firstname: res.data.first_name,
                 lastname: res.data.last_name,
                 avatar: `https://graph.facebook.com/${res.data.id}/picture?type=large`,
                 provider: {
                     uid: res.data.id,
-                    type: 'FACEBOOK'
+                    type: 'FACEBOOK',
+                    accessToken
                 }
             }
             return user
@@ -28,4 +29,4 @@ const authAsync = async (token) => {
     }
 }
 
-export default { authAsync }
+export default authAsync
