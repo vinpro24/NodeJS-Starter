@@ -1,5 +1,5 @@
 import dotenv from 'dotenv'
-dotenv.config({ path: process.env.NODE_ENV ? `.env.development` : `.env` })
+dotenv.config({ path: process.env.NODE_ENV === 'development' ? `.env.development` : `.env` })
 
 import http from 'http'
 import express from 'express'
