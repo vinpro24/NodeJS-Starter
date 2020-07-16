@@ -12,9 +12,11 @@ const SocketConnection = (io) => {
             rooms.forEach(room => {
                 const sockets = io.getSocketInRoom(room)
                 delete sockets[socket.id]
-                const data = { type: 'ROOM.STATUS', payload: sockets }
+                const data = {
+                    type: 'ROOM.STATUS', payload: sockets
+                }
                 io.in(room).emit('data', { channel: room, data })
-            })
+            });
             console.log('User Disconnect', socket.id)
         })
 
@@ -23,17 +25,17 @@ const SocketConnection = (io) => {
             const data = {
                 type: 'ROOM.STATUS', payload: io.getSocketInRoom(room)
             }
-            if (callback) callback(data)
+            if (typeof callback === 'function') callback(data)
             io.in(room).emit('data', { channel: room, data })
             console.log('joining room', room)
         })
 
         socket.on('unsubscribe', (room, callback) => {
             if (!room) {
-                if (callback) callback('Room name is required.')
+                if (typeof callback === 'function') callback('Room name is required.')
             } else {
                 socket.leave(room);
-                if (callback) callback(null, io.getSocketInRoom(room))
+                if (typeof callback === 'function') callback(null, io.getSocketInRoom(room))
                 const data = {
                     type: 'ROOM.STATUS', payload: io.getSocketInRoom(room)
                 }
@@ -43,21 +45,22 @@ const SocketConnection = (io) => {
         })
 
         socket.on('send', (data, callback) => {
-            if (callback) callback()
-            console.log(data.room, action.data)
-            if (data.room) {
-                io.in(data.room).emit('data', action.data)
+            if (typeof callback === 'function') callback()
+            if (data.channel) {
+                socket.to(data.channel).emit('data', data)
             }
         })
     })
 
-    io.getSocketById = (user_id) => {
-        return io.sockets.sockets[user_id]
+    io.getSocketById = (userId) => {
+        return io.sockets.sockets[userId]
     }
-
     io.getSocketInRoom = (roomName) => {
         if (!io.sockets.adapter.rooms[roomName]) return {}
         return io.sockets.adapter.rooms[roomName].sockets
+    }
+    io.send = (channel, data) => {
+        io.in(channel).emit('data', { channel, data })
     }
 }
 
